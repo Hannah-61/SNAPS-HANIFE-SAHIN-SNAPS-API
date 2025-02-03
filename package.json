@@ -1,0 +1,32 @@
+{
+  "name": "snaps-hanife-sahin-snaps-api",
+  "version": "1.0.0",
+  "description": "Snaps project - Back-End",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hannah-61/SNAPS-HANIFE-SAHIN-SNAPS-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hannah-61/SNAPS-HANIFE-SAHIN-SNAPS-API/issues"
+  },
+  "homepage": "https://github.com/Hannah-61/SNAPS-HANIFE-SAHIN-SNAPS-API#readme",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuid4": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
