@@ -1,61 +1,37 @@
-import crypto from "crypto";
-import fs from "fs";
 import express from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
-// ✅ Use fs.readFileSync() to load JSON data
-const photos = JSON.parse(fs.readFileSync("./Data/photos.json", "utf8"));
+dotenv.config();
 
 const router = express.Router();
 
-// ✅ Route to get all photos
-router.get("/", function (request, response) {
-    response.json(photos);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const photosDataPath = path.join(__dirname, "../Data/photos.json");
+let photos = JSON.parse(fs.readFileSync(photosDataPath, "utf-8"));
+
+
+router.get("/", (req, res) => {
+    const photosWithFullPath = photos.map(photo => ({
+        ...photo,
+        photo: `${process.env.FRONTEND_URL}/images/${photo.photo}`
+    }));
+    res.json(photosWithFullPath);
 });
 
-// ✅ Route to get a specific photo by ID
-router.get("/:id", function (request, response) {
-    const photo = photos.find((e) => e.id === request.params.id);
-    if (!photo) {
-        return response.status(404).send("Photo not found");
-    }
-    response.json(photo);
-});
 
-// ✅ Route to get comments for a specific photo
-router.get("/:id/comments", function (request, response) {
-    const photo = photos.find((e) => e.id === request.params.id);
+router.get("/:id", (req, res) => {
+    const photo = photos.find(p => p.id === req.params.id);
     if (!photo) {
-        return response.status(404).send("Photo not found");
+        return res.status(404).json({ error: "Photo not found" });
     }
-    response.json(photo.comments);
-});
-
-// ✅ Route to add a new comment to a photo
-router.post("/:id/comments", function (request, response) {
-    const photo = photos.find((e) => e.id === request.params.id);
-    if (!photo) {
-        return response.status(404).send("Photo not found");
-    }
-    
-    const newComment = {
-        id: crypto.randomUUID(),
-        name: request.body.name,
-        comment: request.body.comment,
-        timestamp: new Date().getTime(),
-    };
-    
-    photo.comments.push(newComment);
-    const photoIndex = photos.findIndex((e) => e.id === request.params.id);
-    photos[photoIndex] = photo;
-    
-    fs.writeFile("./Data/photos.json", JSON.stringify(photos, null, 2), "utf8", (err) => {
-        if (err) {
-            console.log("Failed to save comment:", err);
-            return response.status(500).send("Failed to save comment");
-        }
-    });
-
-    response.json(newComment);
+    photo.photo = `${process.env.FRONTEND_URL}/images/${photo.photo}`;
+    res.json(photo);
 });
 
 export default router;
